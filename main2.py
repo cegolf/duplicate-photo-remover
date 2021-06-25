@@ -24,6 +24,7 @@ class ImageObj:
     rChannel=""
     gChannel=""
     bChannel=""
+    dup=[]
 
     def __init__(self, fileType, path):
         self.fileType = fileType 
@@ -172,18 +173,25 @@ def iterateDirectory(directory):
                         
                      
 
-
+print("Starting Search...")
 imageList = iterateDirectory(directory)
 
 imageCount = len(imageList)
 
 for comb in combinations(imageList,2):
     match = compareImages(comb[0], comb[1])
+    print(match)
     if(match):
         print("MATCH FOUND")
+        #first image is comb[0]
+        #second is image comb[0]
+
+        comb[0].dup.append(comb[1].path)
+        comb[1].dup.append(comb[0].path)
+
+
         im1str = str(comb[0]).split('at ')[1].replace('>', '')
         im2str = str(comb[1]).split('at ')[1].replace('>', '')
-        newFolderName = "Match_"+im1str+"__"+im2str
-        os.mkdir(os.path.join(directory,newFolderName))
-        shutil.move(comb[0].path, directory+"/"+newFolderName)
-        shutil.move(comb[1].path, directory+"/"+newFolderName)
+for img in imageList:
+    print(img.dup)
+       
