@@ -145,25 +145,25 @@ def compareImages(image1, image2):
         match = True
         
     return match
+def scanImages(images):
+	sift = cv.SIFT_create()
 
+	for image in images:
+		image['keypoints'], image['descriptors'] = sift.detectAndCompute(image['image'], None)
 
-
+	return imgs
 
 def iterateDirectory(directory):
-    images = []
-    count = 0
-    for fileName in os.listdir(directory):
-        if (fileName.endswith(".JPG")):
-            count+=1
-            path = os.path.join(directory, fileName)
-            firstImage = Image.open(path)
-            pic = imageio.imread(path)
-            im1 = ImageObj(type(pic), path)
-            getExifdata(firstImage, im1)
-            setImageProps(im1, pic)
-            images.append(im1)
-    return images
+	imgs = []
+	for file in os.listdir(directory):
+		if(file.lower().endswith(('.jpg','.jpeg', '.JPG', '.PNG','.gif','.png'))):
+			path = os.path.join(directory, file)
+			imgs.append({
+				'image': cv.imread(path, cv.IMREAD_GRAYSCALE),
+				'path': path
+			})
 
+	return imgs
 
     ########################################
     # DO NOT DELETE. These are the keys/attributes that can be compared between each photo
@@ -174,24 +174,27 @@ def iterateDirectory(directory):
                      
 
 print("Starting Search...")
+print("Directory: ", directory)
 imageList = iterateDirectory(directory)
 
 imageCount = len(imageList)
 
-for comb in combinations(imageList,2):
-    match = compareImages(comb[0], comb[1])
-    print(match)
-    if(match):
-        print("MATCH FOUND")
-        #first image is comb[0]
-        #second is image comb[0]
+print(imageList[0].__dict__.keys())
 
-        comb[0].dup.append(comb[1].path)
-        comb[1].dup.append(comb[0].path)
+# for comb in combinations(imageList,2):
+#     match = compareImages(comb[0], comb[1])
+#     print(match)
+#     if(match):
+#         print("MATCH FOUND")
+#         #first image is comb[0]
+#         #second is image comb[0]
+
+#         comb[0].dup.append(comb[1].path)
+#         comb[1].dup.append(comb[0].path)
 
 
-        im1str = str(comb[0]).split('at ')[1].replace('>', '')
-        im2str = str(comb[1]).split('at ')[1].replace('>', '')
+#         im1str = str(comb[0]).split('at ')[1].replace('>', '')
+#         im2str = str(comb[1]).split('at ')[1].replace('>', '')
 for img in imageList:
     print(img.dup)
        
